@@ -8,6 +8,12 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { Profile } from './profiles/profile';
 import { EducationModule } from './education/education.module';
+import { Education } from './education/education';
+import { SkillsModule } from './skills/skills.module';
+import { Skill } from './skills/skill';
+import { ExperiencesModule } from './experiences/experiences.module';
+import { ExperienceController } from './experience/experience.controller';
+import { ExperienceService } from './experience/experience.service';
 
 @Module({
   imports: [
@@ -26,7 +32,7 @@ import { EducationModule } from './education/education.module';
       dropSchema: false,
       retryAttempts: 1,
       retryDelay: 5000,
-      entities: [Profile],
+      entities: [Profile, Education, Skill],
       extra: {
         connectionLimit: 3
       }
@@ -35,8 +41,10 @@ import { EducationModule } from './education/education.module';
     AuthModule,
     MailModule,
     EducationModule,
+    SkillsModule,
+    ExperiencesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService]
+  controllers: [AppController, ExperienceController],
+  providers: [AppService, ExperienceService]
 })
 export class AppModule {}
