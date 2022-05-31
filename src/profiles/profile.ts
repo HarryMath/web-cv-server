@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Education } from '../education/education';
 
 @Entity('profiles')
@@ -37,6 +37,12 @@ export class Profile {
   @Column('varchar', {length: 50, nullable: true})
   currentLocation: string | null = null;
 
+  @Column('bool', {default: false})
+  verified = false;
+
+  @Column({type: 'enum', enum: ['EN', 'RU'], default: 'EN'})
+  lang: 'EN'|'RU' = 'EN';
+
   @OneToMany(() => Education, e => e.profile, {
     cascade: true,
     eager: false
@@ -44,7 +50,28 @@ export class Profile {
   education: Education[] = [];
 }
 
-export type IProfileDTO = Omit<Omit<Profile, 'password'>, 'sendNotifications'>;
+export type MyProfileDTO = Omit<Profile, 'password'>;
+
+export type ProfileDTO = Omit<Omit<
+  MyProfileDTO,
+  'sendNotifications'>,
+  'lang'>;
+
+export interface IProfileRegister {
+  email: string;
+  fullName: string;
+  password: string;
+  lang: 'EN'|'RU';
+}
+
+export interface IProfileSave {
+  email: string;
+  login: string;
+  fullName: string;
+  password: string;
+  verified: boolean;
+  lang: 'EN'|'RU';
+}
 
 export interface IUser {
   id: string;

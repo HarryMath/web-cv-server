@@ -14,6 +14,7 @@ import { Skill } from './skills/skill';
 import { ExperiencesModule } from './experiences/experiences.module';
 import { ExperienceController } from './experience/experience.controller';
 import { ExperienceService } from './experience/experience.service';
+import { Visitor } from './profiles/visitor';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { ExperienceService } from './experience/experience.service';
       dropSchema: false,
       retryAttempts: 1,
       retryDelay: 5000,
-      entities: [Profile, Education, Skill],
+      entities: [Profile, Education, Skill, Visitor],
       extra: {
         connectionLimit: 3
       }
