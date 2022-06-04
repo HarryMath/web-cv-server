@@ -1,6 +1,6 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProfileDTO, Profile, IProfileRegister, MyProfileDTO, IProfileSave } from './profile';
+import { ProfileDTO, Profile, ProfileRegister, MyProfileDTO, IProfileSave, ProfileUpdate, IUser } from './profile';
 import { Like, Repository } from 'typeorm';
 import { CountryDefiner } from './country.definer';
 import { Visitor } from './visitor';
@@ -33,11 +33,8 @@ export class ProfilesService {
     return profile;
   }
 
-  async registerProfile(user: IProfileRegister): Promise<MyProfileDTO> {
-    const possibleMailConflicts = await this.profilesRepository.find({email: user.email});
-    if ( possibleMailConflicts.length > 0 ) {
-      throw new ConflictException('email is taken');
-    }
+  async registerProfile(user: ProfileRegister): Promise<MyProfileDTO> {
+    await this.checkEmail(user.email);
     user.fullName = user.fullName.trim();
     user.password = utils.md5(user.password);
     let login = user.fullName.replace(' ', '');
@@ -73,12 +70,44 @@ export class ProfilesService {
     throw new NotFoundException('invalid token');
   }
 
+  async updateProfile(profile: ProfileUpdate, user: IUser): Promise<ProfileUpdate> {
+    if (profile.email && profile.email != user.email) {
+      await this.checkEmail(profile.email);
+    }
+    if (profile.password) {
+      profile.password = utils.md5(profile.password);
+    }
+    if (profile.fullName) {
+      profile.fullName = profile.fullName.trim();
+      let login = profile.fullName.replace(' ', '');
+      const possibleLoginConflicts = (await this.profilesRepository.find({
+        login: Like(login + '%')
+      })).length;
+      if (possibleLoginConflicts > 0) {
+        login = login + possibleLoginConflicts;
+      }
+      profile.login = login;
+    }
+    const updateResult = await this.profilesRepository.update(
+      {id: user.id},
+      profile
+    );
+    console.log(updateResult);
+    if (!updateResult.affected || updateResult.affected === 0) {
+      // TODO handle this unreachable exception
+      console.error('updated result affected: ' + updateResult.affected);
+      throw new InternalServerErrorException('something wrong')
+    }
+    delete profile['password'];
+    return profile;
+  }
+
   async sendVerificationLink(user: IProfileSave): Promise<string> {
     const token = utils.md5(this.usersToVerify.size + user.login + Math.random());
     await this.mailService.sendMail({
       to: user.email,
       subject: messages[user.lang]['verification subject'],
-      text: messages[user.lang]['verification text'](user.fullName, token)
+      html: messages[user.lang]['verification text'](user.fullName, token)
     });
     return token;
   }
@@ -96,8 +125,15 @@ export class ProfilesService {
       this.mailService.sendMail({
         to: profile.email,
         subject: messages[profile.lang]['visit subject'],
-        text: messages[profile.lang]['visit text'](name, country, city, visitorIp)
+        html: messages[profile.lang]['visit text'](name, country, city, visitorIp)
       });
+    }
+  }
+
+  private async checkEmail(email: string): Promise<void> {
+    const possibleMailConflicts = await this.profilesRepository.find({email});
+    if ( possibleMailConflicts.length > 0 ) {
+      throw new ConflictException('email is taken');
     }
   }
 }

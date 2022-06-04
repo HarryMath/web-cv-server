@@ -1,8 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env.prod'],
+    }),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',

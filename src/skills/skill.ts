@@ -14,7 +14,7 @@ export class Skill {
   @Column('varchar', {length: 20}) // @ts-ignore
   skillName: string;
 
-  @Column('int8', {}) // @ts-ignore
+  @Column('int', {}) // @ts-ignore
   skillLevel: number;
 
   @Column('int', {name: 'profileId'}) //@ts-ignore

@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('visitors')
+
 export class Visitor {
 
   @Column('int', {}) // @ts-ignore
@@ -12,6 +13,6 @@ export class Visitor {
   @Column('varchar', {length: 50}) // @ts-ignore
   country: string;
 
-  @Column('bigint', {}) // @ts-ignore
+  @PrimaryColumn('bigint', {}) // @ts-ignore
   timestamp: number;
 }
