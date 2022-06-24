@@ -9,6 +9,7 @@ async function bootstrap(): Promise<number> {
     whitelist: false,
     forbidNonWhitelisted: false
   }))
+  app.enableCors();
   const port = parseInt(process.env.PORT || '80');
   await app.listen(port);
   return port;

@@ -20,6 +20,10 @@ export class Profile {
   @Column('varchar', {length: 50, unique: true}) // @ts-ignore
   email: string;
 
+  @IsOptional()
+  @Column('varchar', {length: 40, nullable: true})
+  role: string | null = null;
+
   @IsString()
   @Column('text') // @ts-ignore
   password: string;
@@ -31,6 +35,10 @@ export class Profile {
   @IsOptional()
   @Column('text', {nullable: true})
   avatar: string | null = null;
+
+  @IsOptional()
+  @Column('text', {nullable: true})
+  intro: string | null = null;
 
   @IsInt()
   @Column('int', {nullable: true})

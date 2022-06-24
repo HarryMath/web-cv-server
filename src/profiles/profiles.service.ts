@@ -24,9 +24,10 @@ export class ProfilesService {
 
   async getOne(login: string, visitorIp: string): Promise<ProfileDTO> {
     const profile = await this.profilesRepository.findOne({login});
+    console.log('find profile: ', profile);
     if (!profile) throw new NotFoundException();
     this.registerVisit(profile, visitorIp);
-    const dto = profile as ProfileDTO;
+    const dto = Object.assign({}, profile) as ProfileDTO;
     delete dto['password'];
     delete dto['sendNotifications'];
     delete dto['lang'];
@@ -121,12 +122,16 @@ export class ProfilesService {
       country: `${country}`,
       timestamp: new Date().getTime()
     });
+    console.log('sending notification if ' + profile.sendNotifications)
     if (profile.sendNotifications) {
-      this.mailService.sendMail({
+      const response = await this.mailService.sendMail({
         to: profile.email,
         subject: messages[profile.lang]['visit subject'],
         html: messages[profile.lang]['visit text'](name, country, city, visitorIp)
       });
+      if (!response.reponse.includes('OK')) {
+        // TODO log that message not send;
+      }
     }
   }
 

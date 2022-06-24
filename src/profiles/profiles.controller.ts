@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ProfilesService } from './profiles.service';
-import { ProfileDTO, Profile, MyProfileDTO, ProfileRegister, ProfileUpdate, IUser } from './profile';
+import { ProfileDTO, MyProfileDTO, ProfileRegister, ProfileUpdate, IUser } from './profile';
 import { RealIP } from 'nestjs-real-ip';
 import { Public } from '../shared/decorators/public.decorator';
 import { User } from '../shared/decorators/user.decorator';

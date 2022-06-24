@@ -16,7 +16,7 @@ export class CountryDefiner {
     const country = res.data.country_name;
     const city = res.data.city;
     if (!country) {
-      this.logger.error('ip-api returned bad response: ' + res.data);
+      this.logger.error('ip-api returned bad response: ', res.data);
     }
     return {country, city};
   }
