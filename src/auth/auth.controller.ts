@@ -5,12 +5,21 @@ import { Public } from '../shared/decorators/public.decorator';
 @Controller('auth')
 export class AuthController {
 
-  constructor(private readonly authService: AuthService) {
-  }
+  constructor(
+    private readonly authService: AuthService
+  ) {}
 
   @Public()
   @Post()
   login(@Body() body: {email: string, password: string}): Promise<{token: string}>  {
     return this.authService.login(body.email, body.password);
   }
+
+  @Public()
+  @Post('github')
+  loginWithGithub(@Body() payload: {code: string}): Promise<{token: string}> {
+    return this.authService.authWithGitHub(payload.code);
+  }
+
+
 }

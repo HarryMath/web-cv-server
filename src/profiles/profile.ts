@@ -1,7 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Education } from '../education/education';
 import { IsBoolean, IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
 import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
+import { Experience } from '../experiences/experience';
+import { Skill } from '../skills/skill';
+
 
 @Entity('profiles')
 export class Profile {
@@ -64,11 +67,11 @@ export class Profile {
   @Column({type: 'enum', enum: ['EN', 'RU'], default: 'EN'})
   lang: 'EN'|'RU' = 'EN';
 
-  @OneToMany(() => Education, e => e.profile, {
-    cascade: true,
-    eager: false
-  }) // @ts-ignore
-  education: Education[];
+  education: Education[] = [];
+
+  experience: Experience[] = [];
+
+  skills: Skill[] = [];
 }
 
 export class MyProfileDTO extends OmitType(Profile, ['password']) {}
@@ -88,9 +91,9 @@ export interface IProfileSave {
   lang: 'EN'|'RU';
 }
 
-class ProfileFullUpdate extends OmitType(Profile, ['verified', 'id']) {}
+class ProfileRefresh extends OmitType(Profile, ['verified', 'id']) {}
 
-export class ProfileUpdate extends PartialType(ProfileFullUpdate) {}
+export class ProfileUpdate extends PartialType(ProfileRefresh) {}
 
 export interface IUser {
   id: number;

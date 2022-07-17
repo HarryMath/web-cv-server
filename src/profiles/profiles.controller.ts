@@ -9,6 +9,11 @@ import { User } from '../shared/decorators/user.decorator';
 export class ProfilesController {
   constructor(private readonly profilesService: ProfilesService) {}
 
+  @Get('me/view')
+  getMyProfile(@User() user: IUser): Promise<ProfileDTO> {
+    return this.profilesService.getOwned(user.id);
+  }
+
   @Get(':id')
   @Public()
   getProfile(
@@ -21,7 +26,6 @@ export class ProfilesController {
   @Post()
   @Public()
   registerProfile(@Body() user: ProfileRegister): Promise<MyProfileDTO> {
-    console.log(user);
     return this.profilesService.registerProfile(user);
   }
 
@@ -36,7 +40,7 @@ export class ProfilesController {
   @Patch()
   updateProfile(
     @Body() profile: ProfileUpdate,
-    @User('email') user: IUser,
+    @User() user: IUser,
   ): Promise<ProfileUpdate> {
     return this.profilesService.updateProfile(profile, user);
   }

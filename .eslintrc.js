@@ -24,6 +24,7 @@ module.exports = {
     'no-empty': 0,
     'camelcase': 1,
     'quotes': [2, 'single'],
+    'semi': [2, 'always'],
     '@typescript-eslint/no-floating-promises': 0,
     '@typescript-eslint/ban-ts-comment': 0,
     'prettier/prettier': [

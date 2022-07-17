@@ -33,6 +33,7 @@ import { Experience } from './experiences/experience';
       dropSchema: false,
       retryAttempts: 1,
       retryDelay: 5000,
+      logging: true,
       entities: [Profile, Education, Skill, Experience, Visitor],
       extra: {
         connectionLimit: 3

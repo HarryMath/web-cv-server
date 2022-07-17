@@ -7,6 +7,9 @@ import { Visitor } from './visitor';
 import { MailerService } from '@nestjs-modules/mailer';
 import { messages } from '../shared/messages';
 import { utils } from '../shared/utils';
+import { Education } from '../education/education';
+import { Skill } from '../skills/skill';
+import { Experience } from '../experiences/experience';
 
 @Injectable()
 export class ProfilesService {
@@ -22,16 +25,40 @@ export class ProfilesService {
     private readonly mailService: MailerService
   ) {}
 
-  async getOne(login: string, visitorIp: string): Promise<ProfileDTO> {
-    const profile = await this.profilesRepository.findOne({login});
-    console.log('find profile: ', profile);
+  async getOwned(ownerId: number): Promise<MyProfileDTO> {
+    const profile = await this.profilesRepository.createQueryBuilder('p')
+      .leftJoinAndMapMany('p.education', Education, 'edu', 'p.id=edu.profileId')
+      .leftJoinAndMapMany('p.experience', Experience, 'ex', 'p.id=ex.profileId')
+      .leftJoinAndMapMany('p.skills', Skill, 'sk', 'p.id=sk.profileId')
+      .where('p.id = :id', { id: ownerId })
+      .getOne();
     if (!profile) throw new NotFoundException();
+    const dto = Object.assign({}, profile) as MyProfileDTO;
+    delete dto['password'];
+    return dto;
+  }
+
+  async getOne(login: string, visitorIp: string): Promise<ProfileDTO> {
+    const profile = await this.profilesRepository.createQueryBuilder('p')
+      .leftJoinAndMapMany('p.education', Education, 'edu', 'p.id=edu.profileId')
+      .leftJoinAndMapMany('p.experience', Experience, 'ex', 'p.id=ex.profileId')
+      .leftJoinAndMapMany('p.skills', Skill, 'sk', 'p.id=sk.profileId')
+      .where('p.login = :login', { login })
+      .getOne();
+    if (!profile) throw new NotFoundException();
+    profile.education = profile.education.sort((e1, e2) => {
+      return e1.startYear + e1.startMonth / 12 - e2.startYear - e2.startMonth / 12;
+    });
+    profile.experience = profile.experience.sort((e1, e2) => {
+      return e1.startYear + e1.startMonth / 12 - e2.startYear - e2.startMonth / 12;
+    });
+    console.log('find profile: ', profile);
     this.registerVisit(profile, visitorIp);
     const dto = Object.assign({}, profile) as ProfileDTO;
     delete dto['password'];
     delete dto['sendNotifications'];
     delete dto['lang'];
-    return profile;
+    return dto;
   }
 
   async registerProfile(user: ProfileRegister): Promise<MyProfileDTO> {
@@ -49,7 +76,7 @@ export class ProfilesService {
       login,
       verified: false,
       ...user
-    }
+    };
     userToSave.lang = user.lang || 'EN';
     const response: MyProfileDTO = await this.profilesRepository.save(userToSave);
     delete response['password'];
@@ -93,11 +120,10 @@ export class ProfilesService {
       {id: user.id},
       profile
     );
-    console.log(updateResult);
     if (!updateResult.affected || updateResult.affected === 0) {
       // TODO handle this unreachable exception
       console.error('updated result affected: ' + updateResult.affected);
-      throw new InternalServerErrorException('something wrong')
+      throw new InternalServerErrorException('something wrong with updating profile');
     }
     delete profile['password'];
     return profile;
@@ -122,14 +148,13 @@ export class ProfilesService {
       country: `${country}`,
       timestamp: new Date().getTime()
     });
-    console.log('sending notification if ' + profile.sendNotifications)
     if (profile.sendNotifications) {
       const response = await this.mailService.sendMail({
         to: profile.email,
         subject: messages[profile.lang]['visit subject'],
         html: messages[profile.lang]['visit text'](name, country, city, visitorIp)
       });
-      if (!response.reponse.includes('OK')) {
+      if (!response || !response.reponse?.includes('OK')) {
         // TODO log that message not send;
       }
     }

@@ -7,6 +7,8 @@ import { Profile } from '../profiles/profile';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './auth.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { GithubService } from './github.service';
+import { JWT_SECRET } from './auth.secret';
 
 @Module({
   imports: [
@@ -14,11 +16,11 @@ import { ConfigModule } from '@nestjs/config';
     PassportModule,
     TypeOrmModule.forFeature([Profile]),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || '23i8w09243h10d9313',
+      secret: JWT_SECRET,
       signOptions: { expiresIn: '60m' }
     })
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [GithubService, AuthService, JwtStrategy],
   controllers: [AuthController],
   exports: [AuthService]
 })

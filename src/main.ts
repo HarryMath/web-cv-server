@@ -8,7 +8,7 @@ async function bootstrap(): Promise<number> {
   app.useGlobalPipes(new ValidationPipe({
     whitelist: false,
     forbidNonWhitelisted: false
-  }))
+  }));
   app.enableCors();
   const port = parseInt(process.env.PORT || '80');
   await app.listen(port);
