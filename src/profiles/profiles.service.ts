@@ -10,6 +10,7 @@ import { utils } from '../shared/utils';
 import { Education } from '../education/education';
 import { Skill } from '../skills/skill';
 import { Experience } from '../experiences/experience';
+import { Project } from '../projects/project';
 
 @Injectable()
 export class ProfilesService {
@@ -27,11 +28,13 @@ export class ProfilesService {
 
   async getOwned(ownerId: number): Promise<MyProfileDTO> {
     const profile = await this.profilesRepository.createQueryBuilder('p')
+      .where('p.id = :id', { id: ownerId })
       .leftJoinAndMapMany('p.education', Education, 'edu', 'p.id=edu.profileId')
       .leftJoinAndMapMany('p.experience', Experience, 'ex', 'p.id=ex.profileId')
       .leftJoinAndMapMany('p.skills', Skill, 'sk', 'p.id=sk.profileId')
-      .where('p.id = :id', { id: ownerId })
-      .getOne();
+      .leftJoinAndMapMany('p.projects', Project, 'pr', 'p.id=pr.profileId')
+      .getOne(); // @ts-ignore
+    profile.projects = profile.projects.map(p => p.toDto());
     if (!profile) throw new NotFoundException();
     const dto = Object.assign({}, profile) as MyProfileDTO;
     delete dto['password'];
@@ -40,10 +43,11 @@ export class ProfilesService {
 
   async getOne(login: string, visitorIp: string): Promise<ProfileDTO> {
     const profile = await this.profilesRepository.createQueryBuilder('p')
+      .where('p.login = :login', { login })
       .leftJoinAndMapMany('p.education', Education, 'edu', 'p.id=edu.profileId')
       .leftJoinAndMapMany('p.experience', Experience, 'ex', 'p.id=ex.profileId')
       .leftJoinAndMapMany('p.skills', Skill, 'sk', 'p.id=sk.profileId')
-      .where('p.login = :login', { login })
+      .leftJoinAndMapMany('p.projects', Project, 'pr', 'p.id=pr.profileId')
       .getOne();
     if (!profile) throw new NotFoundException();
     profile.education = profile.education.sort((e1, e2) => {
@@ -51,8 +55,8 @@ export class ProfilesService {
     });
     profile.experience = profile.experience.sort((e1, e2) => {
       return e1.startYear + e1.startMonth / 12 - e2.startYear - e2.startMonth / 12;
-    });
-    console.log('find profile: ', profile);
+    }); // @ts-ignore
+    profile.projects = profile.projects.map(p => p.toDto());
     this.registerVisit(profile, visitorIp);
     const dto = Object.assign({}, profile) as ProfileDTO;
     delete dto['password'];

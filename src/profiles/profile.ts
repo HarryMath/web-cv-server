@@ -4,6 +4,7 @@ import { IsBoolean, IsEmail, IsInt, IsOptional, IsString } from 'class-validator
 import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
 import { Experience } from '../experiences/experience';
 import { Skill } from '../skills/skill';
+import { Project } from '../projects/project';
 
 
 @Entity('profiles')
@@ -72,6 +73,8 @@ export class Profile {
   experience: Experience[] = [];
 
   skills: Skill[] = [];
+
+  projects: Project[] = [];
 }
 
 export class MyProfileDTO extends OmitType(Profile, ['password']) {}

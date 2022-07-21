@@ -30,7 +30,7 @@ export class EducationService {
   async update(edu: EducationUpdate, userId: number): Promise<EducationUpdate> {
     const id = edu.id;
     delete edu['id'];
-    delete edu['profileId'];
+    delete edu['profile'];
     const oldVersion = await this.repository.findOne({id});
     if (!oldVersion) {
       throw new NotFoundException();
@@ -38,6 +38,7 @@ export class EducationService {
     if (oldVersion.profileId != userId) {
       throw new ForbiddenException();
     }
+    edu['profileId'] = userId;
     const updateResult = await this.repository.update({id}, edu);
     if (!updateResult.affected || updateResult.affected == 0) {
       // TODO handle this unreachable exception

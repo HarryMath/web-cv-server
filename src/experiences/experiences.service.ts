@@ -30,6 +30,7 @@ export class ExperiencesService {
   async update(exp: ExperienceUpdate, userId: number): Promise<ExperienceUpdate> {
     const id = exp.id;
     delete exp['id'];
+    delete exp['profile'];
     const oldVersion = await this.repository.findOne({id});
     if (!oldVersion) {
       throw new NotFoundException();
@@ -37,6 +38,7 @@ export class ExperiencesService {
     if (oldVersion.profileId != userId) {
       throw new ForbiddenException();
     }
+    exp['profileId'] = userId;
     const updateResult = await this.repository.update({id}, exp);
     if (!updateResult.affected || updateResult.affected == 0) {
       // TODO handle this unreachable exception

@@ -30,7 +30,8 @@ export class SkillsService {
   async update(skill: SkillUpdate, userId: number): Promise<SkillUpdate> {
     const id = skill.id;
     delete skill['id'];
-    delete skill['profileId'];
+    delete skill['profile'];
+    console.log(skill);
     const oldVersion = await this.repository.findOne({id});
     if (!oldVersion) {
       throw new NotFoundException();
@@ -38,6 +39,7 @@ export class SkillsService {
     if (oldVersion.profileId != userId) {
       throw new ForbiddenException();
     }
+    skill['profileId'] = userId;
     const updateResult = await this.repository.update({id}, skill);
     if (!updateResult.affected || updateResult.affected == 0) {
       // TODO handle this unreachable exception

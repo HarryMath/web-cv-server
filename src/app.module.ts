@@ -14,6 +14,9 @@ import { Visitor } from './profiles/visitor';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/jwt.guard';
 import { Experience } from './experiences/experience';
+import { ProjectsModule } from './projects/projects.module';
+import { Project } from './projects/project';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
@@ -34,7 +37,7 @@ import { Experience } from './experiences/experience';
       retryAttempts: 1,
       retryDelay: 5000,
       logging: true,
-      entities: [Profile, Education, Skill, Experience, Visitor],
+      entities: [Profile, Education, Skill, Experience, Project, Visitor],
       extra: {
         connectionLimit: 3
       }
@@ -45,6 +48,8 @@ import { Experience } from './experiences/experience';
     EducationModule,
     SkillsModule,
     ExperiencesModule,
+    ProjectsModule,
+    ImagesModule,
   ],
   providers: [{
     provide: APP_GUARD,
