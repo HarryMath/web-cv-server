@@ -5,6 +5,7 @@ import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
 import { Experience } from '../experiences/experience';
 import { Skill } from '../skills/skill';
 import { Project } from '../projects/project';
+import { Image } from '../images/image';
 
 
 @Entity('profiles')
@@ -75,6 +76,8 @@ export class Profile {
   skills: Skill[] = [];
 
   projects: Project[] = [];
+
+  images: Image[] = [];
 }
 
 export class MyProfileDTO extends OmitType(Profile, ['password']) {}

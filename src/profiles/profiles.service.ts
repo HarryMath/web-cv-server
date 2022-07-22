@@ -33,6 +33,7 @@ export class ProfilesService {
       .leftJoinAndMapMany('p.experience', Experience, 'ex', 'p.id=ex.profileId')
       .leftJoinAndMapMany('p.skills', Skill, 'sk', 'p.id=sk.profileId')
       .leftJoinAndMapMany('p.projects', Project, 'pr', 'p.id=pr.profileId')
+      .leftJoinAndMapMany('p.images', Project, 'i', 'p.id=i.profileId')
       .getOne(); // @ts-ignore
     profile.projects = profile.projects.map(p => p.toDto());
     if (!profile) throw new NotFoundException();

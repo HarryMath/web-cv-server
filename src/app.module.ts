@@ -17,6 +17,7 @@ import { Experience } from './experiences/experience';
 import { ProjectsModule } from './projects/projects.module';
 import { Project } from './projects/project';
 import { ImagesModule } from './images/images.module';
+import { Image } from './images/image';
 
 @Module({
   imports: [
@@ -37,7 +38,7 @@ import { ImagesModule } from './images/images.module';
       retryAttempts: 1,
       retryDelay: 5000,
       logging: true,
-      entities: [Profile, Education, Skill, Experience, Project, Visitor],
+      entities: [Profile, Education, Skill, Experience, Project, Image, Visitor],
       extra: {
         connectionLimit: 3
       }
