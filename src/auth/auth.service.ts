@@ -61,6 +61,7 @@ export class AuthService {
       fullName: userData.name.trim(),
       lang: 'EN',
       login: userData.login,
+      github: `https://github.com/${userData.login}`,
       password: this.randomString(),
       verified: true
     };

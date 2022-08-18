@@ -6,29 +6,29 @@ import { OmitType, PartialType } from '@nestjs/mapped-types';
 @Entity('projects')
 export class Project {
 
-  @PrimaryGeneratedColumn() // @ts-ignore
-  id: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @MinLength(2)
   @Column('varchar', {length: 100})
-  title = '';
+  title!: string;
 
   @MinLength(2)
   @Column('varchar', {length: 100})
-  role = '';
+  role!: string;
 
   @IsOptional()
   @Column('varchar', {length: 100, nullable: true})
-  place = '';
+  place!: string;
 
   @IsString()
-  @Column('text', {}) // @ts-ignore
-  description: string;
+  @Column('text', {})
+  description!: string;
 
   @IsString()
   @IsOptional()
   @Column('text', {nullable: true})
-  image: string | null = null;
+  image!: string|null;
 
   @IsString()
   @Column('text', {})
@@ -39,8 +39,8 @@ export class Project {
   tags = '[]';
 
   @IsOptional() // this field is set with value from authorised request
-  @Column('int', {name: 'profileId'}) // @ts-ignore
-  profileId: number;
+  @Column('int', {name: 'profileId'})
+  profileId!: number;
 
   @ManyToOne(() => Profile, {eager: false})
   @JoinColumn([

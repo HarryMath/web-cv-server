@@ -9,6 +9,11 @@ export class ImagesController {
 
   constructor(private readonly service: ImagesService) {}
 
+  @Get()
+  getByUserId(@User('id') userId: number): Promise<Image[]> {
+    return this.service.getByUserId(userId);
+  }
+
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   uploadFile(
@@ -16,11 +21,6 @@ export class ImagesController {
     @User('id') userId: number
   ): Promise<Image> {
     return this.service.saveImage(file, userId);
-  }
-
-  @Get()
-  getByUserId(@User('id') userId: number): Promise<Image[]> {
-    return this.service.getByUserId(userId);
   }
 
   @Delete()

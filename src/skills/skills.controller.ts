@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { SkillsService } from './skills.service';
 import { User } from '../shared/decorators/user.decorator';
 import { Skill, SkillUpdate } from './skill';
@@ -6,6 +6,11 @@ import { Skill, SkillUpdate } from './skill';
 @Controller('skills')
 export class SkillsController {
   constructor(private readonly service: SkillsService) {}
+
+  @Get()
+  get(@User('id') userId: number): Promise<Skill[]> {
+    return this.service.getByUserId(userId);
+  }
 
   @Patch()
   update(

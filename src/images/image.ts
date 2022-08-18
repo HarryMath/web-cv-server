@@ -5,20 +5,20 @@ import { Profile } from '../profiles/profile';
 export class Image {
 
   @PrimaryGeneratedColumn() // @ts-ignore
-  id: number;
+  id!: number;
 
   @Column('text', {})
-  publicUrl = '';
+  publicUrl!: string;
 
   @Column('varchar', {length: 100})
-  key = '';
+  key!: string;
 
-  @Column('int', {name: 'profileId'}) // @ts-ignore
-  profileId: number;
+  @Column('int', {name: 'profileId'})
+  profileId!: number;
 
   @ManyToOne(() => Profile, {eager: false})
   @JoinColumn([
     {name: 'profileId', referencedColumnName: 'id'}
   ])
-  profile: Profile | null = null;
+  profile!: Profile;
 }

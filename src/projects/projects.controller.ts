@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { User } from '../shared/decorators/user.decorator';
 import { ProjectDto, ProjectUpdateDto } from './project';
@@ -8,6 +8,11 @@ export class ProjectsController {
   constructor(
     private readonly service: ProjectsService
   ) {}
+
+  @Get()
+  get(@User('id') userId: number): Promise<ProjectDto[]> {
+    return this.service.getByUserId(userId);
+  }
 
   @Patch()
   update(
@@ -32,4 +37,5 @@ export class ProjectsController {
   ): Promise<void> {
     return this.service.delete(id, userId);
   }
+
 }

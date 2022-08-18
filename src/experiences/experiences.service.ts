@@ -2,12 +2,14 @@ import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundE
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Experience, ExperienceUpdate } from './experience';
+import { ImageParser } from './image.parser';
 
 @Injectable()
 export class ExperiencesService {
   constructor(
     @InjectRepository(Experience)
-    private readonly repository: Repository<Experience>
+    private readonly repository: Repository<Experience>,
+    private readonly images: ImageParser
   ) {}
 
   async getOne(id: number): Promise<Experience> {
@@ -24,6 +26,7 @@ export class ExperiencesService {
 
   async save(exp: Experience, userId: number): Promise<Experience> {
     exp.profileId = userId;
+    exp.companyLogo = await this.images.getCompanyLogo(exp.place);
     return await this.repository.save(exp);
   }
 
@@ -37,6 +40,9 @@ export class ExperiencesService {
     }
     if (oldVersion.profileId != userId) {
       throw new ForbiddenException();
+    }
+    if (exp.place && exp.place.length > -1 && oldVersion.place != exp.place) {
+      exp.companyLogo = await this.images.getCompanyLogo(exp.place);
     }
     exp['profileId'] = userId;
     const updateResult = await this.repository.update({id}, exp);

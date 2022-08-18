@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { Experience, ExperienceUpdate } from './experience';
 import { User } from '../shared/decorators/user.decorator';
 import { ExperiencesService } from './experiences.service';
@@ -7,6 +7,11 @@ import { ExperiencesService } from './experiences.service';
 export class ExperiencesController {
 
   constructor(private service: ExperiencesService) {
+  }
+
+  @Get()
+  get(@User('id') userId: number): Promise<Experience[]> {
+    return this.service.getByUserId(userId);
   }
 
   @Patch()

@@ -6,52 +6,55 @@ import { IsInt, IsOptional, IsString, Max, Min, MinLength } from 'class-validato
 @Entity('experience')
 export class Experience {
 
-  @PrimaryGeneratedColumn() // @ts-ignore
-  id: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @IsInt()
   @Min(1)
   @Max(12)
-  @Column('int', {}) // @ts-ignore
-  startMonth: number;
+  @Column('int', {})
+  startMonth!: number;
 
   @IsInt()
-  @Column('int', {}) // @ts-ignore
-  startYear: number;
+  @Column('int', {})
+  startYear!: number;
 
   @IsInt()
   @Min(0) // 0 means thad date not selected
   @Max(12)
   @Column('int', {default: 0})
-  endMonth = 0;
+  endMonth!: number;
 
   @IsInt()
   @Column('int', {default: 0})
-  endYear = 0;
+  endYear!: number;
 
   @MinLength(2)
-  @Column('varchar', {length: 100}) // @ts-ignore
-  role: string;
+  @Column('varchar', {length: 100})
+  role!: string;
 
   @MinLength(2)
-  @Column('varchar', {length: 100}) // @ts-ignore
-  place: string;
+  @Column('varchar', {length: 100})
+  place!: string;
+
+  @Column('text', {nullable: true})
+  companyLogo!: string|null;
 
   @IsString()
-  @Column('text', {}) // @ts-ignore
-  description: string;
+  @Column('text', {})
+  description!: string;
 
   @IsString()
   @Column('varchar', {length: 50})
-  location = '';
+  location!: string;
 
   @IsOptional()
   @Column('varchar', {length: 50, nullable: true})
-  link: string | null = null;
+  link!: string|null;
 
   @IsOptional() // this field is set with value from authorised request
-  @Column('int', {name: 'profileId'}) // @ts-ignore
-  profileId: number;
+  @Column('int', {name: 'profileId'})
+  profileId!: number;
 
   @ManyToOne(() => Profile, {eager: false})
   @JoinColumn([

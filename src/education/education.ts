@@ -5,17 +5,17 @@ import { OmitType, PartialType } from '@nestjs/mapped-types';
 
 @Entity('education')
 export class Education {
-  @PrimaryGeneratedColumn() // @ts-ignore
-  id: number;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
   @IsString()
   @MinLength(2)
-  @Column('varchar', {length: 100}) // @ts-ignore
-  institutionName: string;
+  @Column('varchar', {length: 100})
+  institutionName!: string;
 
   @IsString()
   @Column('varchar', {length: 100, default: ''})
-  label = '';
+  label!: string;
 
   @IsInt()
   @Min(1)
@@ -31,18 +31,18 @@ export class Education {
   @Min(0) // 0 means thad date not selected
   @Max(12)
   @Column('int', {default: 0})
-  endMonth = 0;
+  endMonth!: number;
 
   @IsInt()
   @Column('int', {default: 0})
-  endYear = 0;
+  endYear!: number;
 
   @Column('int', {name: 'profileId'}) //@ts-ignore
   profileId: number;
 
   @IsOptional()
   @Column('text', {nullable: true})
-  description: string | null = null;
+  description!: string|null;
 
   @ManyToOne(() => Profile, (profile) => profile.education,{eager: false})
   @JoinColumn([
